@@ -1,7 +1,8 @@
+import 'package:currency_2/models/symbol_model.dart';
 import 'package:flutter/material.dart';
 
 class CustomDropdownButtom extends StatefulWidget {
-  final List<DropdownMenuItem<String>>? items;
+  final List<Symbol> items;
   final String? selectedValue;
   const CustomDropdownButtom(
       {Key? key, required this.items, this.selectedValue})
@@ -12,7 +13,7 @@ class CustomDropdownButtom extends StatefulWidget {
 }
 
 class _CustomDropdownButtomState extends State<CustomDropdownButtom> {
-  String _dropdownValue = 'first';
+  String _dropdownValue = 'USD';
   void dropdownCallback(String? selectedValue) {
     if (selectedValue is String) {
       setState(() {
@@ -36,8 +37,18 @@ class _CustomDropdownButtomState extends State<CustomDropdownButtom> {
             color: Colors.red,
             fontSize: 25,
           ),
+          selectedItemBuilder: (context) {
+            return widget.items.map((symbol) {
+              return Text(symbol.key);
+            }).toList();
+          },
           onChanged: dropdownCallback,
-          items: widget.items,
+          items: widget.items.map((symbol) {
+            return DropdownMenuItem(
+              value: symbol.key,
+              child: Text(symbol.name),
+            );
+          }).toList(),
         ),
       ),
     );

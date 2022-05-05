@@ -12,7 +12,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String _dropdownValue = 'first';
+  final String _dropdownValue = 'first';
 
   @override
   Widget build(BuildContext context) {
@@ -42,33 +42,11 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       CustomDropdownButtom(
                         selectedValue: _dropdownValue,
-                        items: [
-                          DropdownMenuItem<String>(
-                            onTap: () => _dropdownValue = 'first',
-                            child: const Text('teste'),
-                            value: 'first',
-                          ),
-                          DropdownMenuItem<String>(
-                            onTap: () => _dropdownValue = 'second',
-                            child: const Text('teste2'),
-                            value: 'second',
-                          )
-                        ],
+                        items: state is AppInitialized ? state.items : [],
                       ),
                       CustomDropdownButtom(
                         selectedValue: _dropdownValue,
-                        items: [
-                          DropdownMenuItem<String>(
-                            onTap: () => _dropdownValue = 'first',
-                            child: const Text('teste'),
-                            value: 'first',
-                          ),
-                          DropdownMenuItem<String>(
-                            onTap: () => _dropdownValue = 'second',
-                            child: const Text('teste2'),
-                            value: 'second',
-                          )
-                        ],
+                        items: state is AppInitialized ? state.items : [],
                       ),
                     ],
                   )

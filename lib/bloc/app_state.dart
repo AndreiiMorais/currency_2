@@ -16,7 +16,7 @@ class AppUninitialized extends AppState {
 }
 
 class AppInitialized extends AppState {
-  final items;
+  final List<Symbol> items;
   const AppInitialized({
     required this.items,
     required bool isLoading,
