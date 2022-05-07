@@ -1,6 +1,8 @@
 import 'package:currency_2/bloc/app_bloc.dart';
-import 'package:currency_2/widgets/custom_dropdown_buttom.dart';
-import 'package:currency_2/widgets/custom_textfield.dart';
+import 'package:currency_2/helpers/loading/loading_screen.dart';
+import 'package:currency_2/widgets/dialogs/show_converted_value_dialog.dart';
+import 'package:currency_2/widgets/dropdown/custom_dropdown_buttom.dart';
+import 'package:currency_2/widgets/textfields/custom_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -12,14 +14,34 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final String _dropdownValue = 'first';
+  final TextEditingController _controller = TextEditingController();
+  String _fromDropdownValue = 'USD';
+  String _toDropdonValue = 'BRL';
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     context.read<AppBloc>().add(AppInitializeEvent());
     return BlocConsumer<AppBloc, AppState>(
-      listener: (context, state) {
-        // TODO: implement listener
+      listener: (context, state) async {
+        if (state.isLoading == true) {
+          context.showLoader(context);
+        } else {
+          context.hideLoader(context);
+        }
+        if (state is AppConvertedState) {
+          await showGenericDialog(
+            context: context,
+            title: 'Conversion From ${state.from} to ${state.to}',
+            content:
+                'the amount of ${state.amount} ${state.from} was converted in ${state.result?.toStringAsFixed(2)} ${state.to}',
+          );
+        }
       },
       builder: (context, state) {
         return Scaffold(
@@ -36,20 +58,58 @@ class _HomePageState extends State<HomePage> {
               padding: const EdgeInsets.fromLTRB(10, 50, 10, 10),
               child: Column(
                 children: [
-                  const CustomTextfield(),
+                  CustomTextfield(
+                    controller: _controller,
+                  ),
                   Row(
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       CustomDropdownButtom(
-                        selectedValue: _dropdownValue,
+                        key: const ValueKey('fromDropdownButton'),
+                        selectedValue: _fromDropdownValue,
+                        onChange: (value) {
+                          if (value is String) {
+                            setState(() {
+                              _fromDropdownValue = value;
+                            });
+                          }
+                        },
                         items: state is AppInitialized ? state.items : [],
                       ),
                       CustomDropdownButtom(
-                        selectedValue: _dropdownValue,
+                        key: const ValueKey('toDropdownButton'),
+                        selectedValue: _toDropdonValue,
+                        onChange: (value) {
+                          if (value is String) {
+                            setState(() {
+                              _toDropdonValue = value;
+                            });
+                          }
+                        },
                         items: state is AppInitialized ? state.items : [],
                       ),
                     ],
-                  )
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: ElevatedButton(
+                      style: ButtonStyle(
+                        fixedSize: MaterialStateProperty.all<Size>(
+                          Size(
+                            MediaQuery.of(context).size.width,
+                            50,
+                          ),
+                        ),
+                      ),
+                      child: const Icon(Icons.refresh),
+                      onPressed: () => context.read<AppBloc>().add(
+                            AppConvertEvent(
+                                amountToConvert: _controller.text,
+                                convertedFrom: _fromDropdownValue,
+                                toBeConverted: _toDropdonValue),
+                          ),
+                    ),
+                  ),
                 ],
               ),
             ),

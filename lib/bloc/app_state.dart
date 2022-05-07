@@ -3,28 +3,49 @@ part of 'app_bloc.dart';
 @immutable
 abstract class AppState {
   final bool isLoading;
-
-  const AppState({required this.isLoading});
+  final Exception? exception;
+  final String? from;
+  final String? to;
+  final double? result;
+  final String? amount;
+  final List<Symbol> items;
+  const AppState({
+    required this.isLoading,
+    this.from,
+    this.to,
+    this.result,
+    this.amount,
+    this.exception,
+    this.items = const [],
+  });
 }
 
 class AppUninitialized extends AppState {
-  final Exception? exception;
-  const AppUninitialized({
-    required bool isLoading,
-    required this.exception,
-  }) : super(isLoading: isLoading);
+  const AppUninitialized(
+      {required Exception? exception, required bool isLoading})
+      : super(isLoading: isLoading);
 }
 
 class AppInitialized extends AppState {
-  final List<Symbol> items;
   const AppInitialized({
-    required this.items,
     required bool isLoading,
-  }) : super(isLoading: isLoading);
+    required List<Symbol> items,
+    required Exception? exception,
+  }) : super(items: items, isLoading: isLoading);
 }
 
 class AppConvertedState extends AppState {
   const AppConvertedState({
+    required double result,
+    required String from,
+    required String to,
+    required String amount,
     required bool isLoading,
-  }) : super(isLoading: isLoading);
+  }) : super(
+          result: result,
+          from: from,
+          to: to,
+          amount: amount,
+          isLoading: isLoading,
+        );
 }

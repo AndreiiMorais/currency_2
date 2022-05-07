@@ -1,5 +1,6 @@
 import 'package:currency_2/bloc/app_bloc.dart';
 import 'package:currency_2/homepage.dart';
+import 'package:currency_2/services/http_service_imp.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: BlocProvider<AppBloc>(
-        create: (context) => AppBloc(),
+        create: (context) => AppBloc(HttpServiceImp()),
         child: const HomePage(),
       ),
     );

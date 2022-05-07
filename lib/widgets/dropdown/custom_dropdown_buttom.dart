@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 
 class CustomDropdownButtom extends StatefulWidget {
   final List<Symbol> items;
-  final String? selectedValue;
-  const CustomDropdownButtom(
-      {Key? key, required this.items, this.selectedValue})
+  String? selectedValue;
+  final void Function(String? value) onChange;
+  CustomDropdownButtom({Key? key, required this.items, this.selectedValue, required this.onChange})
       : super(key: key);
 
   @override
@@ -13,13 +13,8 @@ class CustomDropdownButtom extends StatefulWidget {
 }
 
 class _CustomDropdownButtomState extends State<CustomDropdownButtom> {
-  String _dropdownValue = 'USD';
-  void dropdownCallback(String? selectedValue) {
-    if (selectedValue is String) {
-      setState(() {
-        _dropdownValue = selectedValue;
-      });
-    }
+  void dropdownCallback(String? value) {
+    
   }
 
   @override
@@ -29,8 +24,11 @@ class _CustomDropdownButtomState extends State<CustomDropdownButtom> {
         margin: const EdgeInsets.all(10),
         color: Colors.white,
         child: DropdownButton<String>(
+          alignment: Alignment.center,
+          isDense: true,
+          itemHeight: 95,
           isExpanded: true,
-          value: _dropdownValue,
+          value: widget.selectedValue,
           iconEnabledColor: Colors.black,
           iconSize: 30,
           style: const TextStyle(
@@ -42,9 +40,10 @@ class _CustomDropdownButtomState extends State<CustomDropdownButtom> {
               return Text(symbol.key);
             }).toList();
           },
-          onChanged: dropdownCallback,
+          onChanged: widget.onChange,
           items: widget.items.map((symbol) {
             return DropdownMenuItem(
+              alignment: Alignment.centerLeft,
               value: symbol.key,
               child: Text(symbol.name),
             );
